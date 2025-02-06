@@ -42,13 +42,13 @@ on:
     ###
     ### Secrets
     ###
-#    secrets:
-#      dockerhub_username:
-#        description: 'The username for Dockerhub.'
-#        required: false
-#      dockerhub_password:
-#        description: 'The password for Dockerhub.'
-#        required: false
+    secrets:
+      dockerhub_username:
+        description: 'The username for Dockerhub.'
+        required: false
+      dockerhub_password:
+        description: 'The password for Dockerhub.'
+        required: false
 
 jobs:
   # -----------------------------------------------------------------------------------------------

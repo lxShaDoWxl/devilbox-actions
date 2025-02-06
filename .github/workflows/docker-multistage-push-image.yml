@@ -40,13 +40,13 @@ on:
     ###
     ### Secrets
     ###
-#    secrets:
-#      dockerhub_username:
-#        description: 'The username for Dockerhub.'
-#        required: true
-#      dockerhub_password:
-#        description: 'The password for Dockerhub.'
-#        required: true
+    secrets:
+      dockerhub_username:
+        description: 'The username for Dockerhub.'
+        required: false
+      dockerhub_password:
+        description: 'The password for Dockerhub.'
+        required: false
 #    env:
 #      REGISTRY: ghcr.io
 
