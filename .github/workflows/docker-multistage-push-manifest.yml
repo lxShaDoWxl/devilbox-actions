@@ -42,13 +42,13 @@ on:
     ###
     ### Secrets
     ###
-    secrets:
-      dockerhub_username:
-        description: 'The username for Dockerhub.'
-        required: false
-      dockerhub_password:
-        description: 'The password for Dockerhub.'
-        required: false
+#    secrets:
+#      dockerhub_username:
+#        description: 'The username for Dockerhub.'
+#        required: false
+#      dockerhub_password:
+#        description: 'The password for Dockerhub.'
+#        required: false
 
 jobs:
   # -----------------------------------------------------------------------------------------------
@@ -87,7 +87,7 @@ jobs:
 
       - name: "[SETUP] Determine Docker tag"
         id: tag
-        uses: john-ea/devilbox-actions/.github/actions/docker-tag-action@master
+        uses: lxShaDoWxl/devilbox-actions/.github/actions/docker-tag-action@master
         with:
           latest_git_branch: ${{ inputs.default_branch }}
           latest_docker_tag_name: ${{ inputs.tag }}
@@ -105,21 +105,28 @@ jobs:
           echo "ARCHES: ${ARCHES}"
 
 
-      # ------------------------------------------------------------
-      # Login
-      # ------------------------------------------------------------
-      - name: "Login"
-        uses: docker/login-action@v3
+#      # ------------------------------------------------------------
+#      # Login
+#      # ------------------------------------------------------------
+#      - name: "Login"
+#        uses: docker/login-action@v3
+#        with:
+#          username: ${{ secrets.DOCKERHUB_USERNAME }}
+#          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      # Login against a Docker registry except on PR
+      # https://github.com/docker/login-action
+      - name: Log into registry ${{ env.REGISTRY }}
+        uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d # v3.0.0
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
-
-
+          registry: "ghcr.io"
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
       # ------------------------------------------------------------
       # Create Manifest
       # ------------------------------------------------------------
       - name: "[Create Manifest] (${{ steps.manifest.outputs.arches }})"
-        uses: john-ea/devilbox-actions/.github/actions/shell-command-retry-action@master
+        uses: lxShaDoWxl/devilbox-actions/.github/actions/shell-command-retry-action@master
         with:
           command: |
             make manifest-create VERSION=${{ matrix.VERSION }} STAGE=${{ inputs.stage }} FLAVOUR=${{ matrix.FLAVOUR }} ARCHES=${{ steps.manifest.outputs.arches }} TAG=${{ steps.tag.outputs.docker-tag }}
@@ -129,7 +136,7 @@ jobs:
       # Deploy Manifest
       # ------------------------------------------------------------
       - name: "[Push Manifest] ${{ steps.tag.outputs.docker-tag }}"
-        uses: john-ea/devilbox-actions/.github/actions/shell-command-retry-action@master
+        uses: lxShaDoWxl/devilbox-actions/.github/actions/shell-command-retry-action@master
         with:
           command: |
             make manifest-push VERSION=${{ matrix.VERSION }} STAGE=${{ inputs.stage }} FLAVOUR=${{ matrix.FLAVOUR }} TAG=${{ steps.tag.outputs.docker-tag }}
